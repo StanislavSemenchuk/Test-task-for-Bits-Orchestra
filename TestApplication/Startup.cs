@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TestApplication.Models;
+using TestApplication.Services;
 
 namespace TestApplication
 {
@@ -29,6 +32,7 @@ namespace TestApplication
 
             services.AddDbContext<MyDBContext>(options =>
                     options.UseSqlServer(connectionstring));
+            services.AddTransient<ICsvFileService, CsvFileService>();
 
             services.AddControllersWithViews();
         }

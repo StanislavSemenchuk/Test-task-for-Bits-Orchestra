@@ -1,31 +1,54 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using TestApplication.Models;
+using TestApplication.Services;
 
 namespace TestApplication.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private ICsvFileService _csvFileService;
+        private MyDBContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ICsvFileService csvFileService, MyDBContext context)
         {
-            _logger = logger;
+            _context = context;
+            _csvFileService = csvFileService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            return View( await _context.CsvFiles.ToListAsync());
+        }
+
+        public IActionResult AddFile() 
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFile(IFormFile uploadFile) 
+        {
+            if (uploadFile != null) 
+            {
+                await _csvFileService.DownloadFileToServerAsync(uploadFile);
+            }
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Delete(int Id) 
+        {
+            await _csvFileService.DeleteFileRecordFromDatabaseAndFileAsync(Id);
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
