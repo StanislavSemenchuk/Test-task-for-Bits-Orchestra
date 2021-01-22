@@ -51,6 +51,12 @@ namespace TestApplication.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> CsvToDb(int Id) 
+        {
+            await _csvFileService.WriteDataToDBFromCsvFileAsync(Id);
+            return RedirectToAction(nameof(Index), "Users");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

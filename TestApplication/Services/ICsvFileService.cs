@@ -7,5 +7,6 @@ namespace TestApplication.Services
     {
         public Task DownloadFileToServerAsync(IFormFile uploadFile);
         public Task DeleteFileRecordFromDatabaseAndFileAsync(int Id);
+        public Task WriteDataToDBFromCsvFileAsync(int fileId);
     }
 }

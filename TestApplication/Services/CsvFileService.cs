@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,6 +57,34 @@ namespace TestApplication.Services
             {
                 throw new NullReferenceException();
             }
+        }
+
+        public async Task WriteDataToDBFromCsvFileAsync(int fileId)
+        {
+            var file = await _context.CsvFiles.FirstOrDefaultAsync(f=>f.Id==fileId);
+            if (file != null)
+            {
+                List<User> users = File.ReadAllLines(_appEnvironment.WebRootPath + file.Path)
+                                       .Skip(1)
+                                       .Select(v => FromCsv(v))
+                                       .ToList();
+                _context.Users.AddRange(users);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private User FromCsv(string csvLine) 
+        {
+            string[] values = csvLine.Split(',');
+            User user = new User()
+            {
+                Name = values[0],
+                DateOfBirth = Convert.ToDateTime(values[1]),
+                Married = bool.Parse(values[2]),
+                Phone = values[3],
+                Salary = Convert.ToDecimal(values[4])
+            };
+            return user;
         }
     }
 }
