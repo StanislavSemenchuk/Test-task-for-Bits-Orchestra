@@ -25,7 +25,7 @@
     table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-desc", !asc);
 }
 
-document.querySelectorAll(".table-sortable th").forEach(headerCell => {
+document.querySelectorAll(".table-sortable").forEach(headerCell => {
     headerCell.addEventListener("click", () => {
         const tableElement = headerCell.parentElement.parentElement.parentElement;
         const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
